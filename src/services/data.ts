@@ -6,22 +6,22 @@ import {
   INSBaseResponse
 } from "./base";
 
-interface BundleRequest extends HashedPayload {
+interface BundleRequest {
   data_network: string;
 }
 
 interface DataBundle {
-    [key: string]: any;
-    code: string;
-    title: string;
-    price: string;
-    network: string;
-    allowance?: string;
-    available: string;
+  [key: string]: any;
+  code: string;
+  title: string;
+  price: string;
+  network: string;
+  allowance?: string;
+  available: string;
 }
 
 interface BundleResponse extends INSBaseResponse {
-    bundles: DataBundle[] | DataBundle | null;
+  bundles: DataBundle[] | DataBundle | null;
 }
 
 /**

@@ -1,4 +1,10 @@
-import { Service, Api, HashedPayload, INSResponse, INSBaseResponse } from "./base";
+import {
+  Service,
+  Api,
+  HashedPayload,
+  INSResponse,
+  INSBaseResponse
+} from "./base";
 
 interface VendRequest extends HashedPayload {
   meter: number;
@@ -27,7 +33,7 @@ interface MeterInfoResponse extends INSBaseResponse {
 }
 
 interface DiscoBundle {
-  [key:string]:any;
+  [key: string]: any;
   id: string;
   code: string;
   description: string;
@@ -54,7 +60,11 @@ export class Power extends Service {
    * @memberof Power
    */
   public getDiscos() {
-    return this.sendRequest<DiscoResponse>("GET", this.Resource.GET_ELECTRICITY_DISCO, {});
+    return this.sendRequest<DiscoResponse>(
+      "GET",
+      this.Resource.GET_ELECTRICITY_DISCO,
+      {}
+    );
   }
 
   /**
@@ -73,7 +83,11 @@ export class Power extends Service {
       data.meter,
       data.disco
     );
-    return this.sendRequest<MeterInfoResponse>("GET", this.Resource.GET_METER_INFO, data);
+    return this.sendRequest<MeterInfoResponse>(
+      "GET",
+      this.Resource.GET_METER_INFO,
+      data
+    );
   }
 
   /**

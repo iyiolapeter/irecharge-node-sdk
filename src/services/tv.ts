@@ -1,4 +1,10 @@
-import { Service, Api, HashedPayload, INSResponse, INSBaseResponse } from "./base";
+import {
+  Service,
+  Api,
+  HashedPayload,
+  INSResponse,
+  INSBaseResponse
+} from "./base";
 
 /**
  *
@@ -30,27 +36,27 @@ interface SmartCardRequest extends HashedPayload {
 }
 
 interface SmartCardResponse extends INSBaseResponse {
-    access_token: number;
-    customer: string;
-    customer_number: string;
+  access_token: number;
+  customer: string;
+  customer_number: string;
 }
 
 interface BouquetRequest {
-    tv_network: string;
+  tv_network: string;
 }
 
 interface TVBundle {
-    [key: string]: any;
-    code: string;
-    title: string;
-    price: string;
-    network?: string;
-    available?: string;
-    allowance?: string;
+  [key: string]: any;
+  code: string;
+  title: string;
+  price: string;
+  network?: string;
+  available?: string;
+  allowance?: string;
 }
 
 interface BouquetResponse extends INSBaseResponse {
-    bundles: TVBundle[] | TVBundle | null;
+  bundles: TVBundle[] | TVBundle | null;
 }
 
 /**
@@ -69,7 +75,11 @@ export class Tv extends Service {
    * @memberof Tv
    */
   public getBouquets(data: BouquetRequest) {
-    return this.sendRequest<BouquetResponse>("GET", this.Resource.GET_BOUQUETS, data);
+    return this.sendRequest<BouquetResponse>(
+      "GET",
+      this.Resource.GET_BOUQUETS,
+      data
+    );
   }
 
   /**
@@ -90,7 +100,11 @@ export class Tv extends Service {
       data.smartcard_number,
       data.service_code
     );
-    return this.sendRequest<SmartCardResponse>("GET", this.Resource.GET_SMARTCARD_INFO, data);
+    return this.sendRequest<SmartCardResponse>(
+      "GET",
+      this.Resource.GET_SMARTCARD_INFO,
+      data
+    );
   }
 
   /**
