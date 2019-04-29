@@ -1,0 +1,4 @@
+lib
+node_modules
+tests/config.json
+.DS_Store
