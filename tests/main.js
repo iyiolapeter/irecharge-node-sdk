@@ -1,7 +1,7 @@
 const { iRecharge } = require("../lib/index");
 const config = require("./config.json");
 
-const IR = new iRecharge(config);
+const IR = new iRecharge({...config,trace: true});
 
 const run = async ()=>{
     try {

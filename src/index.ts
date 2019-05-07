@@ -28,17 +28,7 @@ export class iRecharge {
   constructor(settings: APICredentials) {
     let baseUrl = settings.live ? PROD_URL : STAGING_URL;
     let options: request.RequestPromiseOptions = {
-      baseUrl: baseUrl,
-      transform: (body, response) => {
-        return {
-          statusCode: response.statusCode,
-          body:
-            settings.responseFormat == "json"
-              ? JSON.parse(String(body).replace("\ufeff", ""))
-              : body,
-          headers: response.headers
-        };
-      }
+      baseUrl: baseUrl
     };
     if (settings.proxy) {
       options.proxy = settings.proxy;

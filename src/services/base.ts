@@ -1,7 +1,7 @@
 import request from "request-promise";
 import crypto from "crypto";
 //import errors from "request-promise/errors";
-import { RequestAPI, RequiredUriUrl } from "request";
+import { RequestAPI, RequiredUriUrl, Response } from "request";
 import { IncomingHttpHeaders } from "http";
 
 export const STAGING_URL = "https://irecharge.com.ng/pwr_api_sandbox/";
@@ -37,6 +37,8 @@ export const Api = {
   }
 };
 
+type Logger = (...args: any) => any;
+
 /**
  *
  *
@@ -50,6 +52,7 @@ export interface APICredentials {
   vendor_code?: string;
   responseFormat: "json" | "xml";
   proxy?: string;
+  trace?: Logger | boolean;
 }
 
 export interface StringObject {
@@ -87,12 +90,43 @@ export interface APIResponse<T extends INSResponse | StringObject> {
   body: T;
 }
 
+function transformer(format: string){
+  return (body: any, response: Response) => {
+    try {
+      if(format === "json"){
+        body = JSON.parse(String(body).replace("\ufeff", ""));
+      }
+      return {
+        statusCode: response.statusCode,
+        headers: response.headers,
+        body,
+      }
+    } catch (error) {
+      return {
+        statusCode: 422,
+        headers: response.headers,
+        body: {
+          message: "Invalid Response Received (This is from SDK)",
+          originalBody: body,
+          originalStatusCode: response.statusCode,
+          error: error
+        }
+      }
+    }
+  }
+}
+
 export abstract class Service {
   private _baseRequest: RequestAPI<
     request.RequestPromise,
     request.RequestPromiseOptions,
     RequiredUriUrl
   >;
+
+  private trace: boolean;
+  // tslint:disable-next-line: no-console
+  private logger: Logger = console.log;
+
   protected abstract Resource: Object;
   protected _settings: APICredentials;
 
@@ -104,8 +138,18 @@ export abstract class Service {
       RequiredUriUrl
     >
   ) {
+    if (settings.trace === true) {
+      this.trace = true;
+    } else if (typeof settings.trace === "function") {
+      this.trace = true;
+      this.logger = settings.trace;
+    } else {
+      this.trace = false;
+    }
     this._settings = Object.freeze(settings);
-    this._baseRequest = baseRequest;
+    this._baseRequest = baseRequest.defaults({
+      transform: transformer(this._settings.responseFormat)
+    });
   }
 
   sendRequest<T>(
@@ -114,6 +158,10 @@ export abstract class Service {
     payload: Object,
     headers?: Object
   ): Promise<APIResponse<T>> {
+    this.log("IRechage ===> Method: ", method);
+    this.log("IRechage ===> Path: ", path);
+    this.log("IRechage ===> Response Format: ", this._settings.responseFormat);
+    this.log("IRechage ===> Payload: ", payload);
     return new Promise((resolve, reject) => {
       let options: request.RequestPromiseOptions & request.OptionsWithUri = {
         method: method,
@@ -128,23 +176,34 @@ export abstract class Service {
       }
       this._baseRequest(options)
         .then(response => {
+          this.log("IRechage ===> Response: ", response);
           resolve(response);
         })
         .catch(error => {
+          this.log("IRechage ===> Error: ", error);
           reject(error);
         });
     });
+  }
+  
+  private log(...args: any) {
+    if (this.trace) {
+      this.logger(...args);
+    }
   }
 
   protected hash(...args: Array<any>) {
     args.push(this._settings.publicKey);
     let combinedstring = args.join(`|`);
-    console.log("combined string: ", combinedstring);
-    return crypto
+    this.log("IRechage ===> Combined String: ", combinedstring);
+    let hash =  crypto
       .createHmac("sha1", this._settings.privateKey)
       .update(combinedstring)
       .digest("hex");
+    this.log("IRechage ===> Hash: ", hash);
+    return hash;
   }
+
 
   abstract vend(data: HashedPayload): any;
 }
