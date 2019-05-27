@@ -28,7 +28,7 @@ export const Api = {
   },
   TV: {
     GET_BOUQUETS: "/v2/get_tv_bouquet.php",
-    GET_SMARTCARD_INFO: "/v2/get_tv_bouquet.php",
+    GET_SMARTCARD_INFO: "/v2/get_smartcard_info.php",
     VEND: "/v2/vend_smartcard.php"
   },
   STATUS: {
@@ -90,17 +90,17 @@ export interface APIResponse<T extends INSResponse | StringObject> {
   body: T;
 }
 
-function transformer(format: string){
+function transformer(format: string) {
   return (body: any, response: Response) => {
     try {
-      if(format === "json"){
+      if (format === "json") {
         body = JSON.parse(String(body).replace("\ufeff", ""));
       }
       return {
         statusCode: response.statusCode,
         headers: response.headers,
-        body,
-      }
+        body
+      };
     } catch (error) {
       return {
         statusCode: 422,
@@ -111,9 +111,9 @@ function transformer(format: string){
           originalStatusCode: response.statusCode,
           error: error
         }
-      }
+      };
     }
-  }
+  };
 }
 
 export abstract class Service {
@@ -185,7 +185,7 @@ export abstract class Service {
         });
     });
   }
-  
+
   private log(...args: any) {
     if (this.trace) {
       this.logger(...args);
@@ -196,14 +196,13 @@ export abstract class Service {
     args.push(this._settings.publicKey);
     let combinedstring = args.join(`|`);
     this.log("IRechage ===> Combined String: ", combinedstring);
-    let hash =  crypto
+    let hash = crypto
       .createHmac("sha1", this._settings.privateKey)
       .update(combinedstring)
       .digest("hex");
     this.log("IRechage ===> Hash: ", hash);
     return hash;
   }
-
 
   abstract vend(data: HashedPayload): any;
 }
