@@ -29,7 +29,7 @@ export const Api = {
   TV: {
     GET_BOUQUETS: "/v2/get_tv_bouquet.php",
     GET_SMARTCARD_INFO: "/v2/get_smartcard_info.php",
-    VEND: "/v2/vend_smartcard.php"
+    VEND: "/v2/vend_tv.php"
   },
   STATUS: {
     VEND: "/v1/vend_status.php",
