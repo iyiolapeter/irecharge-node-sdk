@@ -116,9 +116,9 @@ export class Tv extends Service {
    */
   public vend(data: VendRequest) {
     if (!data.vendor_code && this._settings.vendor_code) {
-        data.vendor_code = this._settings.vendor_code;
+      data.vendor_code = this._settings.vendor_code;
     }
-    data.hash = this.hash(data.access_token, data.smartcard_number);
+    data.hash = this.hash(data.vendor_code, data.reference_id, data.smartcard_number, data.tv_network, data.service_code, data.access_token);
     return this.sendRequest<INSResponse>("GET", this.Resource.VEND, data);
   }
 }
