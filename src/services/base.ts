@@ -24,6 +24,7 @@ export const Api = {
   },
   DATA: {
     GET_BUNDLES: "/v2/get_data_bundles.php",
+    GET_SMILE_INFO: "/v2/get_smile_info.php",
     VEND: "/v2/vend_data.php"
   },
   TV: {
