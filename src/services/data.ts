@@ -25,7 +25,7 @@ interface BundleResponse extends INSBaseResponse {
 }
 
 interface SmileInfoRequest extends HashedPayload {
-    receiver: string;
+  receiver: string;
 }
 
 /**
@@ -67,13 +67,10 @@ export class Data extends Service {
 
   public getSmileInfo(data: SmileInfoRequest) {
     if (!data.vendor_code && this._settings.vendor_code) {
-        data.vendor_code = this._settings.vendor_code;
-      }
-      data.hash = this.hash(
-        data.vendor_code,
-        data.receiver
-      );
-      return this.sendRequest<any>("GET", this.Resource.GET_SMILE_INFO, data);
+      data.vendor_code = this._settings.vendor_code;
+    }
+    data.hash = this.hash(data.vendor_code, data.receiver);
+    return this.sendRequest<any>("GET", this.Resource.GET_SMILE_INFO, data);
   }
 
   /**

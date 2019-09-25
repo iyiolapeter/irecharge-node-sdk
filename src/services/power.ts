@@ -7,7 +7,7 @@ import {
 } from "./base";
 
 interface VendRequest extends HashedPayload {
-  meter: number;
+  meter: string;
   access_token: number;
   disco: string;
   amount: number;
@@ -23,7 +23,7 @@ interface VendResponse extends INSResponse {
 }
 
 interface MeterInfoRequest extends HashedPayload {
-  meter: number;
+  meter: string;
   disco: string;
 }
 
